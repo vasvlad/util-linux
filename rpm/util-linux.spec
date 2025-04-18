@@ -1,3 +1,4 @@
+%define keepstatic 1
 ### Header
 Name:           util-linux
 Version:        2.40.2
@@ -9,11 +10,11 @@ BuildRequires:  libtool
 BuildRequires:  gettext-devel
 BuildRequires:  pam-devel
 BuildRequires:  texinfo
-BuildRequires:  pkgconfig(ext2fs) >= 1.36
+#BuildRequires:  pkgconfig(ext2fs) >= 1.36
 BuildRequires:  pkgconfig(ncursesw)
 BuildRequires:  pkgconfig(popt)
 BuildRequires:  pkgconfig(zlib)
-BuildRequires:  pkgconfig(libcrypt)
+#BuildRequires:  pkgconfig(libcrypt)
 BuildRequires:  libutempter-devel
 BuildRequires:  bison
 BuildRequires:  flex
@@ -143,7 +144,6 @@ See also the "uuid" package, which is a separate implementation.
 License:        BSD
 Summary:        Universally unique ID library
 Requires:       libuuid = %{version}-%{release}
-Provides:       libuuid-static = %{version}-%{release}
 
 %description -n libuuid-devel
 This is the universally unique ID development library and headers,
@@ -157,6 +157,21 @@ short lifetime, to reliably identifying very persistent objects
 across a network.
 
 See also the "uuid-devel" package, which is a separate implementation.
+
+%package -n libuuid-devel-static
+License:        BSD
+Summary:        Universally unique ID library
+
+%description -n libuuid-devel-static
+This is the universally unique ID development library and headers,
+part of e2fsprogs.
+
+The libuuid library generates and parses 128-bit universally unique
+id's (UUID's).  A UUID is an identifier that is unique across both
+space and time, with respect to the space of all UUIDs.  A UUID can
+be used for multiple purposes, from tagging objects with an extremely
+short lifetime, to reliably identifying very persistent objects
+across a network.
 
 %package -n uuidd
 License:        GPLv2+
@@ -257,7 +272,7 @@ rm -f %{buildroot}/%{_lib}/libblkid.so
 ln -s ../proc/self/mounts %{buildroot}/etc/mtab
 
 # remove static libs
-rm -f $RPM_BUILD_ROOT%{_libdir}/lib{uuid,blkid,mount,smartcols,fdisk}.a
+rm -f $RPM_BUILD_ROOT%{_libdir}/lib{blkid,mount,smartcols,fdisk}.a
 
 # find MO files
 %find_lang %{name}
@@ -289,6 +304,7 @@ ln -sf %{_sbindir}/swapoff %{buildroot}/sbin/swapoff
 ln -sf %{_sbindir}/swapon %{buildroot}/sbin/swapon
 %endif
 
+rm -rf $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/uuidd-tmpfiles.conf
 
 %post
 # NOTE: /var/log/lastlog is owned (%ghost) by setup package
@@ -426,7 +442,7 @@ exit 0
 %{_sbindir}/mkswap
 %{_sbindir}/nologin
 %{_sbindir}/runuser
-%{_sbindir}/sulogin
+#%{_sbindir}/sulogin
 
 %{_bindir}/chrt
 %{_bindir}/ionice
@@ -536,6 +552,9 @@ exit 0
 %{_libdir}/libuuid.so
 %{_includedir}/uuid
 %{_libdir}/pkgconfig/uuid.pc
+
+%files -n libuuid-devel-static
+%{_libdir}/*.a
 
 %files -n cfdisk
 %{_sbindir}/cfdisk
